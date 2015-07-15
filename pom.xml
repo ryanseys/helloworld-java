@@ -8,7 +8,7 @@
   <packaging>jar</packaging>
 
   <name>helloworld</name>
-  <url>http://maven.apache.org</url>
+  <url>http://ryanseys.com</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -22,4 +22,11 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <distributionManagement>
+    <repository>
+      <id>helloworld</id>
+      <url>https://storage.googleapis.com/ryanseys-maven</url>
+    </repository>
+  </distributionManagement>
 </project>

@@ -14,7 +14,7 @@ public class HelloWorld {
 
     // Get the message.
     public String getMessage() {
-        return message;
+        return this.message;
     }
 
     // Set the message.
