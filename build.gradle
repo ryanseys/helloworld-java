@@ -1,0 +1,125 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+    }
+}
+
+plugins {
+    id 'com.jfrog.bintray' version '1.3.1'
+}
+
+repositories {
+    mavenCentral()
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+
+// Start of configuration
+def versionTag = '1.0.2'
+def groupName = 'com.ryanseys'
+def pkgName = 'helloworld'
+def githubRepo = 'github.com/ryanseys/helloworld-java'
+def pkgDesc = 'Hello world sample library'
+def pkgLicense = 'Apache-2.0'
+def pkgLicenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+def isDryRun = false
+def developerInfo = {
+    id 'ryanseys'
+    name 'Ryan Seys'
+    url 'https://github.com/ryanseys'
+    email 'ryan@ryanseys.com'
+}
+// End of configuration
+
+group groupName
+version versionTag
+def githubUrl = 'https://' + githubRepo
+def scmUrl = 'scm:git:git://' + githubRepo + '.git'
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_API_KEY')
+    dryRun = isDryRun //Whether to run this as dry-run, without deploying
+    publish = true //If version should be auto published after an upload
+    configurations = ['archives'] // Use the archives Configuration.
+    pkg {
+        repo = 'maven'
+        name = pkgName
+        userOrg = user
+        licenses = [pkgLicense]
+        publicDownloadNumbers = true
+        vcsUrl = githubUrl + '.git'
+        desc = pkgDesc
+        websiteUrl = githubUrl
+        issueTrackerUrl = githubUrl + '/issues'
+        version {
+            name = versionTag
+            desc = pkgDesc
+            vcsTag = versionTag
+            released  = new Date()
+            gpg {
+                sign = true // Determines whether to GPG sign the files. The default is false
+            }
+            mavenCentralSync {
+                sync = true // Optional (true by default). Determines whether to sync the version to Maven Central.
+                user = System.getenv('MAVEN_USER_TOKEN') // OSS user token
+                password = System.getenv('MAVEN_USER_PASS') // OSS user password
+                close = '1' // Close staging repository and release artifacts to Maven Central. Default = 1 (true). Set to 0 = You will release the version manually.
+            }
+        }
+    }
+}
+
+install {
+    repositories.mavenInstaller {
+        pom.name = pkgName
+        pom.version = versionTag
+        pom.artifactId = pkgName
+        pom.project {
+            name pkgName
+            packaging 'bundle'
+            description pkgDesc
+            url githubUrl
+
+            scm {
+                url githubUrl
+                connection scmUrl
+                developerConnection scmUrl
+            }
+
+            developers {
+                developer developerInfo
+            }
+
+            licenses {
+                license {
+                    name pkgLicense
+                    url pkgLicenseUrl
+                    distribution 'repo'
+                }
+            }
+        }
+    }
+}

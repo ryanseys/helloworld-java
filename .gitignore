@@ -1,1 +1,11 @@
-target
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+/.idea/vcs.xml
+.DS_Store
+/build
+/captures
+.gradletasknamecache
+.idea/uiDesigner.xml
+.idea/copyright
