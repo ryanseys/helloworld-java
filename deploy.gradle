@@ -5,11 +5,9 @@ repositories {
 apply plugin: 'java'
 apply plugin: 'maven'
 
-
 def versionTag = version.toString()
 def githubUrl = 'https://' + githubRepo
 def scmUrl = 'scm:git:git://' + githubRepo + '.git'
-def isDryRun = !!deployDryRun
 
 task sourcesJar(type: Jar) {
     from sourceSets.main.java.srcDirs
@@ -29,8 +27,8 @@ artifacts {
 bintray {
     user = bintrayUser
     key = bintrayKey
-    dryRun = isDryRun //Whether to run this as dry-run, without deploying
-    publish = true //If version should be auto published after an upload
+    dryRun = deployDryRun ? true : false // Whether to run this as dry-run, without deploying
+    publish = true // If version should be auto published after an upload
     configurations = ['archives'] // Use the archives Configuration.
     pkg {
         repo = 'maven'
